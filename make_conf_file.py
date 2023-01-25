@@ -1,13 +1,8 @@
 # To compare ADC between multiple DWI files with varying N values
 
-import numpy as np
-import matplotlib.pyplot as plt
-import os
-import pandas as pd
-import seaborn as sns
+from pathlib import Path
 import sys
 import getopt
-from pathlib import Path
 
 mcdc_dir = Path() / "MCDC_Simulator_public-master"
 dynamic_cylinders = mcdc_dir / "instructions/demos/output/dynamic_cylinders"
@@ -83,15 +78,12 @@ def create_lines(N, conf, loc, folder, state, create_substrate):
                     prefix = dynamic_cylinders
                 if not prefix.exists():
                     prefix.mkdir()
-                l =  f"exp_prefix {prefix / 'dyn_cylinder'}"
-    
-                if not os.path.exists(l):
-                    os.makedirs(l)
+                l = f"exp_prefix {prefix / 'dyn_cylinder'}"
 
-            # Make sure to have a compatible path also for scheme_file      
+            # Make sure to have a compatible path also for scheme_file
             elif e[0] == "scheme_file":
                 l = f"scheme_file {scheme_files / Path(e[1]).name}"
-
+           
             elif e[0] == "ini_walkers_pos":
                 l = f"ini_walkers_pos {loc}"
             
