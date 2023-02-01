@@ -7,6 +7,8 @@
 #include "dyncylindergammadistribution.h"
 #include "spheregammadistribution.h"
 #include "axongammadistribution.h"
+#include "neurondistribution.h"
+
 
 //* Auxiliare method to split words in a line using the spaces*//
 template<typename Out>
@@ -38,9 +40,9 @@ ParallelMCSimulation::ParallelMCSimulation(std::string config_file)
 
     SimErrno::checkConfigurationFile(config_file.c_str());
 
-
     params.readSchemeFile(config_file);
 
+    
     SimErrno::checkSimulationParameters(params);
     //printSimulationInfo();
     initializeUnitSimulations();
@@ -187,6 +189,7 @@ void ParallelMCSimulation::initializeUnitSimulations()
         simulation_->dyn_cylinder_list = &this->dyn_cylinders_list;
         simulation_->sphere_list = &this->spheres_list;
         simulation_->axon_list = &this->axons_list;
+        simulation_->neuron_list = &this->neurons_list;
         simulation_->dynamicsEngine->print_expected_time = 0;
         simulations.push_back(simulation_);
 
@@ -209,6 +212,7 @@ void ParallelMCSimulation::initializeUnitSimulations()
     simulation_->dyn_cylinder_list = &this->dyn_cylinders_list;
     simulation_->sphere_list    = &this->spheres_list;
     simulation_->axon_list = &this->axons_list;
+    simulation_->neuron_list = &this->neurons_list;
 
     simulations.push_back(simulation_);
 
@@ -1202,6 +1206,38 @@ void ParallelMCSimulation::addObstacleConfigurations()
         out.close();
         SimErrno::info("Done.\n",cout);
     }
+    if(params.neuron_packing == true){
 
+        string message = "Initialializing neuron distribution";
+        SimErrno::info(message,cout);
+        NeuronDistribution neuron_dist(params.gamma_num_obstacles,params.gamma_icvf
+                                             ,params.min_limits, params.max_limits);
+
+        neuron_dist.createSubstrate();
+
+        params.max_limits = neuron_dist.max_limits;
+        params.min_limits = neuron_dist.min_limits;
+
+        if(params.voxels_list.size()<=0){
+            pair<Eigen::Vector3d,Eigen::Vector3d> voxel_(params.min_limits,params.max_limits);
+            params.voxels_list.push_back(voxel_);
+        }
+        else{
+            params.voxels_list[0].first =  params.min_limits;
+            params.voxels_list[0].second = params.max_limits;
+        }
+
+        string file = params.output_base_name + "_neurons_list.txt";
+
+        ofstream out(file);
+
+        neuron_dist.printSubstrate(out);
+
+        this -> neurons_list = neuron_dist.neurons;
+
+        //params.cylinders_files.push_back(file);
+        out.close();
+        SimErrno::info("Done.\n",cout);
+    }
 
 }

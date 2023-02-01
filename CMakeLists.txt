@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -g0")
-set(CMAKE_CXX_FLAGS_DEBUG   "-Og -g3 -fsanitize=address -fsanitize=undefined")
+set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g3 -fsanitize=address -fsanitize=undefined")
 
 set(SRC_DIR       MCDC_Simulator_public-master/src)
 set(MAIN_TARGET   MC-DC_Simulator)

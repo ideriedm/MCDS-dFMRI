@@ -37,6 +37,7 @@ DynamicsSimulation::DynamicsSimulation() {
     cylinders_list    = nullptr;
     dyn_cylinders_list    = nullptr;
     axons_list    = nullptr;
+    neurons_list    = nullptr;
 
     params.num_walkers = 1; //N
     params.num_steps   = 1; //T
@@ -80,6 +81,7 @@ DynamicsSimulation::DynamicsSimulation(std::string conf_file) {
     dyn_spheres_list      = nullptr;
     dyn_cylinders_list    = nullptr;
     axons_list    = nullptr;
+    neurons_list    = nullptr;
 
     completed = 0;
     readConfigurationFile(conf_file);
@@ -114,6 +116,7 @@ DynamicsSimulation::DynamicsSimulation(Parameters& params_) {
     dyn_spheres_list      = nullptr;
     dyn_cylinders_list    = nullptr;
     axons_list    = nullptr;
+    neurons_list    = nullptr;
 
     params = params_;
     completed = 0;
@@ -674,7 +677,7 @@ void DynamicsSimulation::getAnIntraCellularPosition(Vector3d &intra_pos,int &cyl
     std::mt19937 gen(rd());
     std::uniform_real_distribution<double> udist(0,1);
 
-    if(cylinders_list->size() <=0 and dyn_cylinders_list->size() <=0  and axons_list->size() <=0 and plyObstacles_list->size() <= 0 and spheres_list->size() <=0){
+    if(cylinders_list->size() <=0 and dyn_cylinders_list->size() <=0  and axons_list->size() <=0 and neurons_list->size() <=0 and plyObstacles_list->size() <= 0 and spheres_list->size() <=0){
         SimErrno::error("Cannot initialize intra-axonal walkers within the given substrate.",cout);
         SimErrno::error("There's no defined intra-axonal compartment (missing obstacles?)",cout);
         assert(0);

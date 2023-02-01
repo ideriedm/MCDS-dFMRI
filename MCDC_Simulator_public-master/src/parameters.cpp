@@ -13,40 +13,41 @@ Parameters::Parameters()
     save_phase_shift    = false;
     write_traj          = false;
     write_txt           = false;
-    write_bin           =  true;
+    write_bin           = true;
 
-    hex_cyl_packing    = false;
-    hex_dyn_cyl_packing    = false;
-    hex_sphere_packing = false;
+    hex_cyl_packing         = false;
+    hex_dyn_cyl_packing     = false;
+    hex_sphere_packing      = false;
     hex_packing_radius      = 0;
     hex_packing_separation  = 0;
 
-    gamma_cyl_packing = false;
-    gamma_dyn_cyl_packing = false;
-    gamma_sph_packing = false;
-    gamma_ax_packing = false;
-    gamma_packing_alpha = 0;
-    gamma_packing_beta  = 0;
-    gamma_num_obstacles = 0;
-    gamma_icvf          = 0;
-    min_obstacle_radii  = 0;
-    volume_inc_perc     = 0;
-    dyn_perc            = 0; 
-    active_state = false;
+    gamma_cyl_packing       = false;
+    gamma_dyn_cyl_packing   = false;
+    gamma_sph_packing       = false;
+    gamma_ax_packing        = false;
+    neuron_packing          = false;
+    gamma_packing_alpha     = 0;
+    gamma_packing_beta      = 0;
+    gamma_num_obstacles     = 0;
+    gamma_icvf              = 0;
+    min_obstacle_radii      = 0;
+    volume_inc_perc         = 0;
+    dyn_perc                = 0; 
+    active_state            = false;
 
     ini_walkers_file = "";
-    num_proc    = 0;
-    verbatim    = true;
+    num_proc         = 0;
+    verbatim         = true;
 
     record_phase_times.clear();
     record_pos_times.clear();
     subdivisions_file = "";
 
-    computeVolume = false;
+    computeVolume        = false;
     custom_sampling_area = false;
-    separate_signals = false;
-    img_signal = false;
-    hex_sphere_packing = false;
+    separate_signals     = false;
+    img_signal           = false;
+    hex_sphere_packing   = false;
 
     for (auto i= 0;i<3; i++)
         min_sampling_area[i] = max_sampling_area[i] = 0.0;
@@ -415,6 +416,12 @@ void Parameters::readObstacles(ifstream& in)
             dyn_cylinders_files.push_back(path);
             num_obstacles++;
         }
+        if(str_dist(tmp,"neurons_list") <= 2){
+            string path;
+            in >> path;
+            neurons_files.push_back(path);
+            num_obstacles++;
+        }
         if(str_dist(tmp,"ply") <= 1){
             string path;
             in >> path;
@@ -471,6 +478,11 @@ void Parameters::readObstacles(ifstream& in)
         }
         if(str_dist(tmp,"<sphere_gamma_packing>") <=1){
             gamma_sph_packing = true;
+            readGammaParams(in);
+            num_obstacles++;
+        }
+        if(str_dist(tmp,"<neuron_packing>") <=1){
+            neuron_packing = true;
             readGammaParams(in);
             num_obstacles++;
         }
@@ -647,9 +659,10 @@ void Parameters::readGammaParams(ifstream &in)
 {
     string tmp="";
 
-    while(str_dist(tmp,"</cylinder_gamma_packing>") > 0 || str_dist(tmp,"</axon_gamma_packing>") > 0 || str_dist(tmp,"</sphere_gamma_packing") > 0 || str_dist(tmp,"</dyn_cylinder_gamma_packing>") > 0 )
+    while(str_dist(tmp,"</neuron_packing>") > 0 || str_dist(tmp,"</cylinder_gamma_packing>") > 0 || str_dist(tmp,"</axon_gamma_packing>") > 0 || str_dist(tmp,"</sphere_gamma_packing") > 0 || str_dist(tmp,"</dyn_cylinder_gamma_packing>") > 0 )
     {
         in >> tmp;
+
         std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
         if(str_dist(tmp,"output_conf") <= 1){
             string tst;
@@ -675,6 +688,9 @@ void Parameters::readGammaParams(ifstream &in)
         else if(str_dist(tmp,"num_spheres") <= 1){
             in >> gamma_num_obstacles;
         }
+        else if(str_dist(tmp,"num_neurons") <= 1){
+            in >> gamma_num_obstacles;
+        }
         else if(str_dist(tmp,"min_radius") <= 1){
             in >> min_obstacle_radii;
         }
@@ -689,14 +705,12 @@ void Parameters::readGammaParams(ifstream &in)
         }
         else if(str_dist(tmp,"icvf") <= 1){
             in >> gamma_icvf;
-
         }
-
         else if(str_dist(tmp,"") == 0){
             in.clear();
             //in.ignore();
         }
-        else if(str_dist(tmp,"</cylinder_gamma_packing>") ==0 ||str_dist(tmp,"</axon_gamma_packing>") ==0 || str_dist(tmp,"</sphere_gamma_packing>") == 0 || str_dist(tmp,"</dyn_cylinder_gamma_packing>") == 0 ){
+        else if(str_dist(tmp,"</neuron_packing>") ==0 ||str_dist(tmp,"</cylinder_gamma_packing>") ==0 ||str_dist(tmp,"</axon_gamma_packing>") ==0 || str_dist(tmp,"</sphere_gamma_packing>") == 0 || str_dist(tmp,"</dyn_cylinder_gamma_packing>") == 0 ){
             break;
         }
 

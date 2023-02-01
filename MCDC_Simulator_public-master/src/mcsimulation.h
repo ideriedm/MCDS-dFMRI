@@ -53,6 +53,8 @@ public:
     std::vector <Dynamic_Sphere>* dyn_sphere_list;        /*!< pointer to a vector with all the instances of Dynamic Spheres   */
 
     std::vector <Axon>* axon_list;        /*!< pointer to a vector with all the instances of Axons   */
+   
+    std::vector <Neuron>* neuron_list;        /*!< pointer to a vector with all the instances of Axons   */
 
 
 
