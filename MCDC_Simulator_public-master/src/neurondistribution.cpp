@@ -79,9 +79,8 @@ void NeuronDistribution::createSubstrate()
             neurons.clear();
             for(unsigned i = 0 ; i < num_obstacles; i++){
                 unsigned stuck = 0;
-
                 while(++stuck <= 1000){
-
+                    achieved = true;
                     double t = udist(gen);
                     double x = (t*max_limits[0] + (1-t)*min_limits[0]);
                     t = udist(gen);
@@ -89,10 +88,9 @@ void NeuronDistribution::createSubstrate()
                     t = udist(gen);
                     double z = (t*max_limits[2] + (1-t)*min_limits[2]);
 
-                    Eigen::Vector3d soma_center = {x,y,z};
-                    double soma_radius = 10e-3; //mm
-                    std::vector<Axon> dendrites;
-                    Neuron neuron(dendrites, soma_center, soma_radius);
+                    Eigen::Vector3d soma_center = {x, y, z};
+                    double soma_radius = 5e-3; //mm
+                    Neuron neuron(soma_center, soma_radius);
                     neurons_to_add.push_back(neuron);
 
                     double min_distance;
@@ -106,6 +104,7 @@ void NeuronDistribution::createSubstrate()
                         }
                         break;
                     }
+                    
                 }
 
                 // int dummy;
@@ -151,16 +150,19 @@ void NeuronDistribution::printSubstrate(ostream &out)
         SimErrno::info(std::to_string(neurons[i].soma.center[0]),cout);
 
         out << neurons[i].soma.center[0] << " " << neurons[i].soma.center[1] << " "
-        << neurons[i].soma.center[2] << endl;
-        out << neurons[i].soma.radius << endl;
+        << neurons[i].soma.center[2] << " "
+        << neurons[i].soma.radius << endl;
 
         for (unsigned j = 0; j < neurons[i].dendrites.size(); j++)
         {
-            // out << neurons[i].soma.center << " bas" << neurons[i].soma.radius << " "
-            // << neurons[i].dendrites[j].begin[0] * 1e3  << " " << neurons[i].dendrites[j].begin[1] * 1e3  << " " << neurons[i].dendrites[j].begin[2] * 1e3  << " " 
-            // << neurons[i].dendrites[j].end[0] * 1e3  << " " << neurons[i].dendrites[j].end[1] * 1e3  <<" "<< neurons[i].dendrites[j].end[2] * 1e3  <<" " 
-            // << neurons[i].dendrites[j].min_radius* 1e3  
-            // << endl;
+            for (int k = 0; k < neurons[i].dendrites[j].spheres.size(); k++)
+            {
+                out << neurons[i].dendrites[j].spheres[k].center[0] << " "
+                << neurons[i].dendrites[j].spheres[k].center[1] << " "
+                << neurons[i].dendrites[j].spheres[k].center[2] << " "
+                << neurons[i].dendrites[j].spheres[k].radius << " "
+                << endl;
+            }
         }
     }
 }
